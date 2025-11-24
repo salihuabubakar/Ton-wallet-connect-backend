@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export async function connectToDatabase() {
-  const db = (await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI as string)).connection;
+  const db = (await mongoose.connect(process.env.MONGODB_URI as string)).connection;
 
   db.on('error', console.error.bind(console, 'connection error'));
 

@@ -29,12 +29,14 @@ app.use(apiLimiter);
 
 app.use(
   cors({
-    origin: process.env.NEXT_PUBLIC_CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   })
 );
 
+// ---------------------------
 // Routes
+// ---------------------------
 app.get("/", (req, res) => {
   res.json({ message: "Hello, World!" });
 });
@@ -43,21 +45,5 @@ app.use("/auth", authRoutes);
 app.use("/checkin", checkinRoutes);
 app.use("/profile", profileRoutes);
 app.use("/leaderboard", leaderboardRoutes);
-
-// Lazy DB initialization (serverless safe)
-let dbReady = false;
-
-app.use(async (req, res, next) => {
-  if (!dbReady) {
-    try {
-      await connectToDatabase();
-      dbReady = true;
-    } catch (err) {
-      console.error("DB connection failed:", err);
-      return res.status(500).json({ error: "DB connection failed" });
-    }
-  }
-  next();
-});
 
 export default app;

@@ -7,7 +7,7 @@ export const authenticate = (req: Request & { user?: any }, res: Response, next:
 
   const token = header.split(" ")[1];
   try {
-    req.user = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET as string);
+    req.user = jwt.verify(token, process.env.JWT_SECRET  as string);
     next();
   } catch {
     return res.status(401).json({ error: "Invalid token" });
