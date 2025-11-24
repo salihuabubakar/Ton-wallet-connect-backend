@@ -18,6 +18,9 @@ dotenv.config({
 // Create a new express application
 const app = express();
 
+// ✅ Trust proxy first
+app.set("trust proxy", 1);
+
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minutes
   max: 100, // Limit each IP to 100 requests per `window` (here, per 1 minutes)
@@ -38,7 +41,7 @@ app.use(
 
 // Routes
 app.get('/', (req, res) => {
-  res.json('Hello, World!');
+  res.json('Ton Network Wallet Backend is running');
 });
 app.use("/auth", authRoutes);
 app.use("/checkin", checkinRoutes);
