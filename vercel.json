@@ -2,20 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "./public/**/*",
-      "use": "@vercel/static"
-    },
-    {
-     "src": "src/index.ts",
-     "use": "@vercel/node",
-     "config": { "includeFiles": ["public/**"] }
+      "src": "src/index.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
-    {
-     "src": "/(.*)",
-     "dest": "src/index.ts"
-    }
-  ],
-  "outputDirectory": "public"
+    { "src": "/.*", "dest": "src/index.ts" }
+  ]
 }
