@@ -1,4 +1,4 @@
-import app from "./app";
+import app from "./app.ts";
 
 const port = process.env.NEXT_PUBLIC_HTTP_PORT || 5001;
 
