@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: TON Hero API
+  version: "1.0.0"
+  description: Backend API for TON Hero daily check-in and leaderboard.
+servers:
+  - url: http://localhost:5001
+paths:
+  /auth/challenge:
+    post:
+      summary: Request a challenge message (nonce) to sign with TON wallet.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - walletAddress
+              properties:
+                walletAddress:
+                  type: string
+                  example: EQC...
+      responses:
+        '200':
+          description: Challenge message returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  nonce:
+                    type: string
+  /auth/verify:
+    post:
+      summary: Verify signed challenge and issue token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - walletAddress
+                - nonce
+                - signature
+                - publicKey
+              properties:
+                walletAddress:
+                  type: string
+                nonce:
+                  type: string
+                signature:
+                  type: string
+                publicKey:
+                  type: string
+      responses:
+        '200':
+          description: JWT issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  walletAddress:
+                    type: string
+        '400':
+          description: Invalid or expired nonce
+        '401':
+          description: Signature verification failed
+  /profile:
+    get:
+      summary: Get profile for authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  walletAddress: { type: string }
+                  heroPoints: { type: integer }
+                  streak: { type: integer }
+                  lastCheckIn: { type: string, format: date-time }
+        '401':
+          description: Unauthorized
+  /checkin:
+    post:
+      summary: Perform daily check-in (award points)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Check-in successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  walletAddress: { type: string }
+                  streak: { type: integer }
+                  heroPoints: { type: integer }
+                  lastCheckIn: { type: string, format: date-time }
+        '401':
+          description: Unauthorized
+        '429':
+          description: Already checked in within 24 hours
+  /leaderboard:
+    get:
+      summary: Get top leaderboard
+      responses:
+        '200':
+          description: Top users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  leaderboard:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        walletAddress: { type: string }
+                        heroPoints: { type: integer }
+                        streak: { type: integer }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
